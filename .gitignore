@@ -1,0 +1,102 @@
+# Dependencies
+/vendor/
+composer.lock
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Logs
+*.log
+php_server.log
+php_server_err.log
+
+# Temporary files
+/tmp/
+tmp/
+
+# Uploads (user data)
+uploads/
+
+# Database files
+database/*.db
+database/*.sqlite
+database/json/
+
+# Session files
+/sessions/
+
+# Test files (keep source, ignore runtime)
+test_system.php
+test_login.php
+test_pdf.php
+test_db.php
+check_database.php
+
+# Migration scripts (runtime only)
+run_*.bat
+RUN.bat
+run_execute.bat
+iniciar_sistema.bat
+install_pdf.bat
+execute_now.php
+EXECUTE_AGORA.php
+run_phase3_migration.php
+run_migrations.bat
+run_migration.bat
+fix_uniformes_table.php
+
+# Documentation files (excessive, not needed in repo)
+FASE2-*.md
+FASE2-*.txt
+PHASE2-*.txt
+PHASE3-*.txt
+PHASE3-*.md
+STATUS-*.txt
+INDEX-*.txt
+CONCLUSAO.txt
+FINAL-SUMMARY.txt
+WELCOME.txt
+QUICK-START.txt
+00-START-HERE.txt
+START-HERE.txt
+CARTEIRA-PROFISSIONAL-REAL.md
+GUIA-PHPMYADMIN-SQL.md
+IMPLEMENTACAO-REAL.txt
+RESOLUCAO-COMPLETA.txt
+FASE3-RESOLVIDO.md
+COMO-FAZER-LOGIN.txt
+COMPARACAO-PLANO-VS-REALIDADE.txt
+README-RAPIDO.txt
+README-PHASE2-ADMIN.md
+DOCUMENTACAO.md
+DOCUMENTACAO-UPDATED.md
+RELATORIO_RESOLUCAO.md
+RESUMO_EXECUTIVO.md
+PROXIMOS_PASSOS.md
+SOLUCAO_ERRO_DRIVER.md
+GUIA_RAPIDO.md
+Documentacao_Execucao_Corrigida.md
+README-PDF.md
+README-PHASE2-ADMIN.md
+DOCUMENTACAO-UPDATED.md
+STATUS-FINAL-PHASE3.txt
+GUIA-FASE2.md
+FASE2-ADMIN-AREA-COMPLETO.md
+FASE2-ADMIN-CONCLUSAO-FINAL.txt
+PHASE3-IMPLEMENTATION-SUMMARY.txt
+RELATORIO_RESOLUCAO.md
+
+# Dev config
+.config/
+.agent/
+.qodo/
+docs/

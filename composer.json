@@ -1,0 +1,14 @@
+{
+    "name": "valodia/sistema-gestao-rg",
+    "description": "Sistema de Gestão de RH - Farmácia Valódia",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.0",
+        "tecnickcom/tcpdf": "^6.7"
+    }
+}

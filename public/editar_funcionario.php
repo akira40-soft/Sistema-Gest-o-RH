@@ -34,10 +34,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $sql = "UPDATE funcionarios SET 
                 nome_completo = ?, email = ?, telefone = ?, bi = ?,
-                data_nascimento = ?, sexo = ?, estado_civil = ?, nacionalidade = ?,
+                data_nascimento = ?, sexo = ?,
                 departamento_id = ?, cargo_id = ?, data_admissao = ?, 
-                tipo_contrato = ?, salario_atual = ?, status = ?,
-                numero_crf = ?, validade_certificacao = ?, nivel_escolaridade = ?, formacao_especifica = ?
+                tipo_contrato = ?, salario_atual = ?, status = ?
                 WHERE id = ?";
 
         $stmt = $db->prepare($sql);
@@ -48,18 +47,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_POST['nif'],
             $_POST['data_nascimento'],
             $_POST['sexo'],
-            $_POST['estado_civil'],
-            $_POST['nacionalidade'],
             $_POST['departamento_id'],
             $_POST['cargo_id'],
             $_POST['data_admissao'],
             $_POST['tipo_vinculo'],
             $_POST['salario_atual'],
             $_POST['status'],
-            $_POST['numero_crf'] ?? null,
-            $_POST['validade_crf'] ?? null,
-            $_POST['nivel_escolaridade'] ?? null,
-            $_POST['formacao_especifica'] ?? null,
             $id
         ]);
 
@@ -146,13 +139,6 @@ $cargos = $db->query("SELECT * FROM cargos")->fetchAll();
                                     <label class="form-label">BI</label>
                                     <input type="text" name="nif" class="form-control" value="<?php echo htmlspecialchars($f['bi']); ?>">
                                 </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Estado Civil</label>
-                                    <select name="estado_civil" class="form-select">
-                                        <option value="solteiro" <?php echo $f['estado_civil'] == 'solteiro' ? 'selected' : ''; ?>>Solteiro(a)</option>
-                                        <option value="casado" <?php echo $f['estado_civil'] == 'casado' ? 'selected' : ''; ?>>Casado(a)</option>
-                                    </select>
-                                </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Email</label>
                                     <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($f['email']); ?>">
@@ -163,36 +149,7 @@ $cargos = $db->query("SELECT * FROM cargos")->fetchAll();
                                 </div>
                             </div>
 
-                            <h6 class="text-primary mb-3">2. Dados Acadêmicos e Profissionais</h6>
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-4">
-                                    <label class="form-label">Nível de Escolaridade</label>
-                                    <select name="nivel_escolaridade" class="form-select">
-                                        <option value="">Selecione...</option>
-                                        <?php
-$niveis = ['medio', 'tecnico', 'superior', 'pos_graduacao', 'mestrado'];
-foreach ($niveis as $n) {
-    $sel = ($f['nivel_escolaridade'] ?? '') == $n ? 'selected' : '';
-    echo "<option value='$n' $sel>" . ucfirst($n) . "</option>";
-}
-?>
-                                    </select>
-                                </div>
-                                <div class="col-md-8">
-                                    <label class="form-label">Formação Específica</label>
-                                    <input type="text" name="formacao_especifica" class="form-control" value="<?php echo htmlspecialchars($f['formacao_especifica'] ?? ''); ?>">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Nº Ordem (CRF)</label>
-                                    <input type="text" name="numero_crf" class="form-control" value="<?php echo htmlspecialchars($f['numero_crf'] ?? ''); ?>">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Validade Carteira</label>
-                                    <input type="date" name="validade_crf" class="form-control" value="<?php echo $f['validade_certificacao'] ?? ''; ?>">
-                                </div>
-                            </div>
-
-                            <h6 class="text-primary mb-3">3. Dados Contratuais</h6>
+                            <h6 class="text-primary mb-3">2. Dados Contratuais</h6>
                             <div class="row g-3 mb-4">
                                 <div class="col-md-4">
                                     <label class="form-label">Departamento</label>

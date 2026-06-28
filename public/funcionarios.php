@@ -19,7 +19,6 @@ $user = [
 ];
 
 $db = Database::getInstance()->getConnection();
-$isMysql = strpos($db->getAttribute(PDO::ATTR_DRIVER_NAME), 'mysql') !== false;
 
 // Filtros
 $busca = trim($_GET['busca'] ?? '');

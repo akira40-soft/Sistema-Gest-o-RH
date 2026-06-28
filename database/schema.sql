@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS departamentos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL UNIQUE,
     descricao TEXT,
+    responsavel_id INT NULL,
     ativo BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -36,6 +37,7 @@ CREATE TABLE IF NOT EXISTS cargos (
     salario_base DECIMAL(10, 2) NOT NULL,
     descricao TEXT,
     nivel_hierarquico ENUM('operacional', 'tecnico', 'gerencial', 'diretivo') DEFAULT 'operacional',
+    requer_certificacao BOOLEAN DEFAULT FALSE,
     ativo BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -51,7 +53,10 @@ CREATE TABLE IF NOT EXISTS usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
-    tipo_acesso ENUM('geral', 'admin') NOT NULL DEFAULT 'geral',
+    nome VARCHAR(200) NULL,
+    email VARCHAR(100) NULL,
+    foto VARCHAR(500) NULL,
+    tipo_acesso ENUM('super_admin', 'admin', 'gestor_rh', 'funcionario_rh', 'lider_farmaceutico', 'funcionario') NOT NULL DEFAULT 'funcionario',
     ativo BOOLEAN DEFAULT TRUE,
     ultimo_login TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -89,6 +94,10 @@ CREATE TABLE IF NOT EXISTS funcionarios (
     banco VARCHAR(100),
     agencia VARCHAR(20),
     conta VARCHAR(30),
+    iban VARCHAR(50) NULL,
+    nif_angolano VARCHAR(20) NULL,
+    bi VARCHAR(30) NULL,
+    foto VARCHAR(500) NULL,
     
     -- Vinculação com usuário do sistema (opcional)
     usuario_id INT NULL,
@@ -230,11 +239,12 @@ INSERT INTO cargos (nome, salario_base, nivel_hierarquico, descricao) VALUES
 
 -- Inserir Usuários (Senhas: todos usam 'senha123' - hash bcrypt)
 -- Nota: Em produção, usar hash real. Aqui é apenas exemplo
-INSERT INTO usuarios (username, password_hash, tipo_acesso) VALUES
-('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin'),
-('isaac.quarenta', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin'),
-('ilda.livenia', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'geral'),
-('jardel.banoyo', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'geral');
+INSERT INTO usuarios (username, password_hash, tipo_acesso, nome, email) VALUES
+('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'super_admin', 'Isaac Nascimento Quarenta', 'isaac@farmacia-valodia.ao'),
+('josemar_quarenta', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'super_admin', 'Josemar Quarenta', 'josemar@farmacia-valodia.ao'),
+('livenia', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'gestor_rh', 'Livenia Alexandra', 'livenia@farmacia-valodia.ao'),
+('jardel', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'funcionario', 'Jardel Ilunga P. Banoyo', 'jardel@farmacia-valodia.ao'),
+('ilda', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'lider_farmaceutico', 'Ilda Alexandra Livenia', 'ilda@farmacia-valodia.ao');
 
 -- Inserir Funcionários
 INSERT INTO funcionarios (nome_completo, cpf, data_nascimento, sexo, telefone, email, departamento_id, cargo_id, data_admissao, salario_atual, status, usuario_id) VALUES
@@ -392,5 +402,143 @@ DELIMITER ;
 -- ============================================================================
 -- FIM DO SCRIPT
 -- ============================================================================
+
+-- ============================================================================
+-- 8. TABELA: notifications
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS notifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    titulo VARCHAR(200) NOT NULL,
+    mensagem TEXT,
+    tipo ENUM('success', 'warning', 'danger', 'info') DEFAULT 'info',
+    link VARCHAR(500) NULL,
+    canal VARCHAR(20) DEFAULT 'in_app',
+    lida BOOLEAN DEFAULT FALSE,
+    lida_em TIMESTAMP NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    INDEX idx_user_lida (user_id, lida)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- 9. TABELA: licencas
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS licencas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    funcionario_id INT NOT NULL,
+    tipo VARCHAR(50) NOT NULL DEFAULT 'ferias',
+    data_inicio DATE NOT NULL,
+    data_fim DATE NOT NULL,
+    motivo TEXT,
+    status ENUM('pendente', 'aprovada', 'rejeitada') DEFAULT 'pendente',
+    aprovado_por INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (funcionario_id) REFERENCES funcionarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (aprovado_por) REFERENCES usuarios(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- 10. TABELA: documentos_funcionarios
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS documentos_funcionarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    funcionario_id INT NOT NULL,
+    tipo_documento VARCHAR(100) NOT NULL,
+    nome_arquivo VARCHAR(500) NOT NULL,
+    caminho VARCHAR(500) NOT NULL,
+    data_validade DATE NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (funcionario_id) REFERENCES funcionarios(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- 11. TABELA: vagas
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS vagas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(200) NOT NULL,
+    departamento_id INT NULL,
+    cargo_id INT NULL,
+    descricao TEXT,
+    requisitos TEXT,
+    salario_min DECIMAL(10, 2) NULL,
+    salario_max DECIMAL(10, 2) NULL,
+    vagas_disponiveis INT DEFAULT 1,
+    data_abertura DATE,
+    data_fechamento DATE NULL,
+    status ENUM('aberta', 'em_processo', 'fechada') DEFAULT 'aberta',
+    criado_por INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (departamento_id) REFERENCES departamentos(id) ON DELETE SET NULL,
+    FOREIGN KEY (cargo_id) REFERENCES cargos(id) ON DELETE SET NULL,
+    FOREIGN KEY (criado_por) REFERENCES usuarios(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- 12. TABELA: treinamentos
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS treinamentos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(200) NOT NULL,
+    descricao TEXT,
+    instrutor VARCHAR(200),
+    data_inicio DATE,
+    data_fim DATE,
+    carga_horaria INT DEFAULT 0,
+    local VARCHAR(200),
+    status ENUM('planejado', 'em_andamento', 'concluido', 'cancelado') DEFAULT 'planejado',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- 13. TABELA: configuracoes_sistema
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS configuracoes_sistema (
+    chave VARCHAR(100) PRIMARY KEY,
+    valor TEXT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- 14. TABELA: dashboard_preferencias
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS dashboard_preferencias (
+    id INT PRIMARY KEY DEFAULT 1,
+    background VARCHAR(500) DEFAULT 'assets/uploads/backgrounds/default-pharmacy.jpg',
+    overlay_opacity REAL DEFAULT 0.65,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- 15. TABELA: beneficios
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS beneficios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(200) NOT NULL,
+    descricao TEXT,
+    tipo VARCHAR(50) DEFAULT 'geral',
+    valor DECIMAL(10, 2) DEFAULT 0,
+    ativo BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- 16. TABELA: audit_logs
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS audit_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NULL,
+    acao VARCHAR(50) NOT NULL,
+    entidade VARCHAR(100) NOT NULL,
+    entidade_id INT NULL,
+    detalhes TEXT,
+    ip_address VARCHAR(45) NULL,
+    user_agent VARCHAR(255) NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES usuarios(id) ON DELETE SET NULL,
+    INDEX idx_user (user_id),
+    INDEX idx_entidade (entidade, entidade_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 SELECT 'Banco de dados criado com sucesso!' AS mensagem;

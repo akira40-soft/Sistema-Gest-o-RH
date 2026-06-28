@@ -39,36 +39,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception("Sexo inválido.");
         }
 
-        $estadoCivilValidos = ['solteiro', 'casado', 'divorciado', 'viuvo', 'uniao_facto'];
-        $estadoCivil = in_array($_POST['estado_civil'] ?? '', $estadoCivilValidos) ? $_POST['estado_civil'] : null;
-
         $tipoContratoValidos = ['CLT', 'prazo_determinado', 'estagio', 'temporario', 'prestacao_servicos'];
         $tipoContrato = in_array($_POST['tipo_contrato'] ?? '', $tipoContratoValidos) ? $_POST['tipo_contrato'] : 'CLT';
 
-        $tipoPresencaValidos = ['escritorio', 'campo', 'teletrabalho'];
-        $tipoPresenca = in_array($_POST['tipo_presenca'] ?? '', $tipoPresencaValidos) ? $_POST['tipo_presenca'] : 'escritorio';
-
-        $cargoRow = $db->prepare("SELECT requer_certificacao FROM cargos WHERE id = :id");
-        $cargoRow->execute([':id' => (int)$_POST['cargo_id']]);
-        $cargoData = $cargoRow->fetch(PDO::FETCH_ASSOC);
-        $requerCert = $cargoData && (int)$cargoData['requer_certificacao'] === 1;
-
         $sql = "INSERT INTO funcionarios (
-            nome_completo, bi, cpf, rg, data_nascimento, sexo, estado_civil, nacionalidade,
-            telefone, telefone_emergencia, email, endereco, provincia, municipio,
+            nome_completo, bi, cpf, rg, data_nascimento, sexo,
+            telefone, email, endereco,
             departamento_id, cargo_id, data_admissao, tipo_contrato, status,
             salario_atual, banco, agencia, conta, iban,
-            numero_ordem_farmaceuticos, validade_certificacao, carteira_profissional,
-            tipo_presenca, latitude_escritorio, longitude_escritorio, raio_permitido,
-            nif_angolano, observacoes
+            nif_angolano
         ) VALUES (
-            :nome_completo, :bi, :cpf, :rg, :data_nascimento, :sexo, :estado_civil, :nacionalidade,
-            :telefone, :telefone_emergencia, :email, :endereco, :provincia, :municipio,
+            :nome_completo, :bi, :cpf, :rg, :data_nascimento, :sexo,
+            :telefone, :email, :endereco,
             :departamento_id, :cargo_id, :data_admissao, :tipo_contrato, 'ativo',
             :salario_atual, :banco, :agencia, :conta, :iban,
-            :numero_ordem_farmaceuticos, :validade_certificacao, :carteira_profissional,
-            :tipo_presenca, :latitude_escritorio, :longitude_escritorio, :raio_permitido,
-            :nif_angolano, :observacoes
+            :nif_angolano
         )";
 
         $stmt = $db->prepare($sql);
@@ -79,14 +64,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':rg'                         => trim($_POST['rg'] ?? '') ?: trim($_POST['bi']),
             ':data_nascimento'            => $_POST['data_nascimento'],
             ':sexo'                       => $_POST['sexo'],
-            ':estado_civil'               => $estadoCivil,
-            ':nacionalidade'              => trim($_POST['nacionalidade'] ?? 'Angolana') ?: 'Angolana',
             ':telefone'                   => trim($_POST['telefone'] ?? '') ?: null,
-            ':telefone_emergencia'        => trim($_POST['telefone_emergencia'] ?? '') ?: null,
             ':email'                      => trim($_POST['email'] ?? '') ?: null,
             ':endereco'                   => trim($_POST['endereco'] ?? '') ?: null,
-            ':provincia'                  => trim($_POST['provincia'] ?? '') ?: null,
-            ':municipio'                  => trim($_POST['municipio'] ?? '') ?: null,
             ':departamento_id'            => (int)$_POST['departamento_id'],
             ':cargo_id'                   => (int)$_POST['cargo_id'],
             ':data_admissao'              => $_POST['data_admissao'],
@@ -96,15 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':agencia'                    => trim($_POST['agencia'] ?? '') ?: null,
             ':conta'                      => trim($_POST['conta'] ?? '') ?: null,
             ':iban'                       => trim($_POST['iban'] ?? '') ?: null,
-            ':numero_ordem_farmaceuticos' => trim($_POST['numero_ordem_farmaceuticos'] ?? '') ?: null,
-            ':validade_certificacao'      => !empty($_POST['validade_certificacao']) ? $_POST['validade_certificacao'] : null,
-            ':carteira_profissional'      => trim($_POST['carteira_profissional'] ?? '') ?: null,
-            ':tipo_presenca'              => $tipoPresenca,
-            ':latitude_escritorio'        => !empty($_POST['latitude_escritorio']) ? (float)str_replace(',', '.', $_POST['latitude_escritorio']) : null,
-            ':longitude_escritorio'       => !empty($_POST['longitude_escritorio']) ? (float)str_replace(',', '.', $_POST['longitude_escritorio']) : null,
-            ':raio_permitido'             => !empty($_POST['raio_permitido']) ? (int)$_POST['raio_permitido'] : null,
-            ':nif_angolano'               => trim($_POST['nif_angolano'] ?? '') ?: null,
-            ':observacoes'                => trim($_POST['observacoes'] ?? '') ?: null
+            ':nif_angolano'               => trim($_POST['nif_angolano'] ?? '') ?: null
         ]);
 
         $funcionarioId = $db->lastInsertId();

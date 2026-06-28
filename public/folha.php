@@ -73,7 +73,7 @@ $ano = (int)($_GET['ano'] ?? date('Y'));
 
 if (in_array($action, ['pdf_inss', 'pdf_irt', 'pdf_folha'])) {
     $folhasPdf = $db->prepare("
-        SELECT fp.*, f.nome_completo, f.bi, f.nif, d.nome as departamento, c.nome as cargo
+        SELECT fp.*, f.nome_completo, f.bi, f.nif_angolano, d.nome as departamento, c.nome as cargo
         FROM folha_pagamento fp
         JOIN funcionarios f ON fp.funcionario_id = f.id
         LEFT JOIN departamentos d ON f.departamento_id = d.id

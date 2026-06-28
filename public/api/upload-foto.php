@@ -3,7 +3,7 @@
  * API - Upload de Foto de Perfil
  */
 
-require_once __DIR__ . '/../src/bootstrap.php';
+require_once __DIR__ . '/../../src/bootstrap.php';
 
 use App\Auth\AuthMiddleware;
 use App\Models\UserPhoto;

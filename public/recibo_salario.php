@@ -204,7 +204,7 @@ function kz($valor)
                 <strong>Departamento:</strong> <?php echo htmlspecialchars($recibo['departamento']); ?>
             </div>
             <div class="col-6 text-end">
-                <strong>NIF:</strong> <?php echo htmlspecialchars($recibo['nif'] ?? 'N/A'); ?><br>
+                <strong>NIF:</strong> <?php echo htmlspecialchars($recibo['nif_angolano'] ?? 'N/A'); ?><br>
                 <strong>BI:</strong> <?php echo htmlspecialchars($recibo['bi'] ?? 'N/A'); ?>
             </div>
         </div>

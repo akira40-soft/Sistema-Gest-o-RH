@@ -148,7 +148,7 @@ function rg_is_sub_active($pages) {
                 <span class="nav-label">Sistema</span>
             </li>
 
-            <li class="nav-item has-submenu <?php echo rg_is_sub_active(['config.php', 'relatorios.php', 'admin-usuarios.php', 'admin-logs.php']) ? 'expanded' : ''; ?>">
+            <li class="nav-item has-submenu <?php echo rg_is_sub_active(['config.php', 'relatorios.php']) ? 'expanded' : ''; ?>">
                 <a href="#" class="nav-link">
                     <i class="bi bi-gear-fill"></i>
                     <span class="nav-text">Configurações</span>

@@ -30,7 +30,7 @@ try {
 } catch (Exception $e) { $dashBg = null; }
 $dashBackground = $dashBg['background'] ?? 'assets/uploads/backgrounds/default-pharmacy.jpg';
 $dashOverlay = isset($dashBg['overlay_opacity']) ? (float)$dashBg['overlay_opacity'] : 0.65;
-if (!file_exists(__DIR__ . '/' . $dashBackground)) $dashBackground = 'assets/uploads/backgrounds/default-pharmacy.jpg';
+if (!file_exists(__DIR__ . '/' . $dashBackground)) $dashBackground = 'assets/img/background.jpg';
 
 try {
     $totalFuncionarios = (int) $db->query("SELECT COUNT(*) FROM funcionarios WHERE status = 'ativo'")->fetchColumn();
@@ -182,33 +182,49 @@ $pageSubtitle = 'Visão geral do sistema · ' . date('d/m/Y');
                 } catch (Exception $e) {}
                 if ($adminFunc):
                 ?>
-                <div style="background:rgba(255,255,255,0.12);backdrop-filter:blur(12px);border-radius:14px;padding:1rem 1.25rem;margin-top:1rem;border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
-                    <div style="flex:1;min-width:150px;">
-                        <div style="font-size:0.7rem;opacity:0.8;">Meu Ponto Hoje</div>
-                        <div style="font-size:1rem;font-weight:700;">
-                            <?php if ($adminPonto && $adminPonto['hora_entrada']): ?>
-                                Entrada: <?php echo date('H:i', strtotime($adminPonto['hora_entrada'])); ?>
-                                <?php if ($adminPonto['hora_saida']): ?>
-                                    · Saída: <?php echo date('H:i', strtotime($adminPonto['hora_saida'])); ?>
+                <div class="card" style="margin-top:1rem;">
+                    <div class="card-body" style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+                        <div style="flex:1;min-width:150px;">
+                            <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;font-weight:700;letter-spacing:0.5px;">Meu Ponto Hoje</div>
+                            <div style="font-size:1rem;font-weight:700;margin-top:0.25rem;">
+                                <?php if ($adminPonto && $adminPonto['hora_entrada']): ?>
+                                    Entrada: <?php echo date('H:i', strtotime($adminPonto['hora_entrada'])); ?>
+                                    <?php if ($adminPonto['hora_saida']): ?>
+                                        · Saída: <?php echo date('H:i', strtotime($adminPonto['hora_saida'])); ?>
+                                    <?php endif; ?>
+                                <?php else: ?>
+                                    Sem registo hoje
                                 <?php endif; ?>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:8px;" id="dashPontoBtns">
+                            <?php if (!$adminPonto || !$adminPonto['hora_entrada']): ?>
+                                <button class="btn btn-sm btn-success" onclick="dashBaterPonto('entrada', <?php echo $adminFunc['id']; ?>)">
+                                    <i class="bi bi-box-arrow-in-right"></i> Entrada
+                                </button>
+                            <?php elseif (!$adminPonto['hora_saida']): ?>
+                                <button class="btn btn-sm btn-danger" onclick="dashBaterPonto('saida', <?php echo $adminFunc['id']; ?>)">
+                                    <i class="bi bi-box-arrow-right"></i> Saída
+                                </button>
                             <?php else: ?>
-                                Sem registro hoje
+                                <span class="badge badge-success"><i class="bi bi-check-circle"></i> Completo</span>
                             <?php endif; ?>
                         </div>
                     </div>
-                    <form id="adminPontoForm" method="POST" action="timeclock.php" style="display:flex;gap:8px;">
-                        <input type="hidden" name="acao" value="bater_ponto">
-                        <input type="hidden" name="tipo" id="adminPontoTipo">
-                        <input type="hidden" name="latitude" value="">
-                        <input type="hidden" name="longitude" value="">
-                        <button type="button" class="btn btn-sm" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3);font-weight:600;" onclick="document.getElementById('adminPontoTipo').value='entrada';document.getElementById('adminPontoForm').submit();">
-                            <i class="bi bi-box-arrow-in-right"></i> Entrada
-                        </button>
-                        <button type="button" class="btn btn-sm" style="background:rgba(239,68,68,0.3);color:#fff;border:1px solid rgba(239,68,68,0.4);font-weight:600;" onclick="document.getElementById('adminPontoTipo').value='saida';document.getElementById('adminPontoForm').submit();">
-                            <i class="bi bi-box-arrow-right"></i> Saída
-                        </button>
-                    </form>
                 </div>
+                <script>
+                async function dashBaterPonto(tipo, funcId) {
+                    try {
+                        const r = await fetch('/api/timeclock.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ funcionario_id: funcId, tipo: tipo })
+                        });
+                        const result = await r.json();
+                        if (result.success) { location.reload(); } else { alert(result.message); }
+                    } catch(e) { alert('Erro: ' + e.message); }
+                }
+                </script>
                 <?php endif; ?>
 
                 <!-- KPI Cards -->

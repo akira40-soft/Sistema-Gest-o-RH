@@ -220,7 +220,7 @@ CREATE TABLE IF NOT EXISTS relatorios (
 -- ============================================================================
 
 -- Inserir Departamentos
-INSERT INTO departamentos (nome, descricao) VALUES
+INSERT IGNORE INTO departamentos (nome, descricao) VALUES
 ('Vendas', 'Atendimento ao cliente e vendas de medicamentos'),
 ('Administração', 'Gestão administrativa e recursos humanos'),
 ('Farmácia', 'Manipulação e controle de medicamentos'),
@@ -228,7 +228,7 @@ INSERT INTO departamentos (nome, descricao) VALUES
 ('Suporte', 'Tecnologia da informação e suporte técnico');
 
 -- Inserir Cargos
-INSERT INTO cargos (nome, salario_base, nivel_hierarquico, descricao) VALUES
+INSERT IGNORE INTO cargos (nome, salario_base, nivel_hierarquico, descricao) VALUES
 ('Farmacêutico Chefe', 8500.00, 'gerencial', 'Responsável técnico pela farmácia'),
 ('Farmacêutico', 5500.00, 'tecnico', 'Atendimento farmacêutico e manipulação'),
 ('Atendente', 2500.00, 'operacional', 'Atendimento ao cliente e vendas'),
@@ -239,7 +239,7 @@ INSERT INTO cargos (nome, salario_base, nivel_hierarquico, descricao) VALUES
 
 -- Inserir Usuários (Senhas: todos usam 'senha123' - hash bcrypt)
 -- Nota: Em produção, usar hash real. Aqui é apenas exemplo
-INSERT INTO usuarios (username, password_hash, tipo_acesso, nome, email) VALUES
+INSERT IGNORE INTO usuarios (username, password_hash, tipo_acesso, nome, email) VALUES
 ('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'super_admin', 'Isaac Nascimento Quarenta', 'isaac@farmacia-valodia.ao'),
 ('josemar_quarenta', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'super_admin', 'Josemar Quarenta', 'josemar@farmacia-valodia.ao'),
 ('livenia', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'gestor_rh', 'Livenia Alexandra', 'livenia@farmacia-valodia.ao'),
@@ -247,7 +247,7 @@ INSERT INTO usuarios (username, password_hash, tipo_acesso, nome, email) VALUES
 ('ilda', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'lider_farmaceutico', 'Ilda Alexandra Livenia', 'ilda@farmacia-valodia.ao');
 
 -- Inserir Funcionários
-INSERT INTO funcionarios (nome_completo, cpf, data_nascimento, sexo, telefone, email, departamento_id, cargo_id, data_admissao, salario_atual, status, usuario_id) VALUES
+INSERT IGNORE INTO funcionarios (nome_completo, cpf, data_nascimento, sexo, telefone, email, departamento_id, cargo_id, data_admissao, salario_atual, status, usuario_id) VALUES
 ('Isaac Nascimento Quarenta', '123.456.789-00', '1995-03-15', 'M', '+244 923 456 789', 'isaac@farmacia-valodia.ao', 3, 1, '2023-01-10', 8500.00, 'ativo', 2),
 ('Ilda Alexandra Livénia', '234.567.890-11', '1992-07-22', 'F', '+244 924 567 890', 'ilda@farmacia-valodia.ao', 2, 4, '2023-02-01', 7000.00, 'ativo', 3),
 ('Jardel Ilunga P. Banoyo', '345.678.901-22', '1998-11-05', 'M', '+244 925 678 901', 'jardel@farmacia-valodia.ao', 5, 6, '2023-03-15', 4500.00, 'ferias', 4),
@@ -257,7 +257,7 @@ INSERT INTO funcionarios (nome_completo, cpf, data_nascimento, sexo, telefone, e
 ('Vasco Alexandre', '789.012.345-66', '1993-02-28', 'M', '+244 929 012 345', 'vasco@farmacia-valodia.ao', 1, 3, '2023-07-05', 2500.00, 'ativo', NULL);
 
 -- Inserir Registros de Ponto (última semana)
-INSERT INTO registros_ponto (funcionario_id, data, hora_entrada, hora_saida, tipo) VALUES
+INSERT IGNORE INTO registros_ponto (funcionario_id, data, hora_entrada, hora_saida, tipo) VALUES
 -- Segunda-feira
 (1, CURDATE() - INTERVAL 4 DAY, '08:00:00', '17:00:00', 'presenca'),
 (2, CURDATE() - INTERVAL 4 DAY, '08:15:00', '17:10:00', 'presenca'),

@@ -61,33 +61,96 @@ Acesse: **http://localhost:8080**
 
 ```
 Sistema-Gest-o-RH/
-├── src/                          # Código-fonte PHP
-│   ├── Auth/                     # Autenticação e middleware
-│   ├── Database/                 # Conexão MySQL/SQLite (singleton)
-│   ├── Models/                   # Modelos de dados
-│   ├── Utils/                    # PDF, Upload, Audit, Notification
-│   └── bootstrap.php             # Autoloader, sessão, helpers
 │
-├── public/                       # Document-root do servidor
-│   ├── index.php                 # Router principal
-│   ├── login.php                 # Tela de login
-│   ├── dashboard.php             # Painel administrativo
-│   ├── portal.php                # Portal do funcionário
-│   ├── perfil.php                # Perfil do utilizador
-│   ├── perfil_colaborador.php    # Perfil público de colegas
-│   ├── api/                      # Endpoints REST
-│   ├── includes/                 # Sidebar, topbar, layout
-│   ├── css/style-2026.css        # Design system
-│   ├── js/app-2026.js            # Interatividade
-│   └── assets/img/               # Imagens e banners
+├── src/                                # Código-fonte PHP (PSR-4 autoload → App\)
+│   ├── Auth/                           # Autenticação, login, roles, middleware
+│   │   └── Auth.php                    # Classe principal de autenticação
+│   ├── Database/                       # Conexão com banco de dados
+│   │   └── Database.php                # Singleton MySQL/SQLite com fallback
+│   ├── Models/                         # Modelos de dados
+│   │   ├── Funcionario.php             # Modelo de funcionários
+│   │   ├── Turno.php                   # Modelo de turnos
+│   │   └── RG.php                      # Carteira profissional
+│   ├── Utils/                          # Utilitários
+│   │   ├── Audit.php                   # Logger de auditoria
+│   │   ├── Notification.php            # Sistema de notificações
+│   │   ├── PDF.php                     # Geração de PDF (TCPDF)
+│   │   └── Upload.php                  # Upload de imagens/arquivos
+│   └── bootstrap.php                   # Autoloader, sessão, helpers
 │
-├── database/
-│   ├── schema.sql                # Schema completo (MySQL)
-│   ├── schema_sqlite.sql         # Schema SQLite (fallback)
-│   └── seed.sql                  # Dados de teste
+├── public/                             # Document-root do servidor PHP
+│   ├── index.php                       # Router principal (redireciona por role)
+│   ├── login.php                       # Tela de login
+│   ├── logout.php                      # Logout
+│   ├── dashboard.php                   # Painel administrativo (admin/RH)
+│   ├── portal.php                      # Portal do funcionário (self-service)
+│   │
+│   ├── # --- Módulo RH & Pessoal ---
+│   ├── funcionarios.php                # Listagem de funcionários (admin)
+│   ├── admissao.php                    # Formulário de admissão
+│   ├── editar_funcionario.php          # Edição de funcionário
+│   ├── departamentos.php               # Gestão de departamentos
+│   ├── cargos.php                      # Gestão de cargos
+│   ├── usuarios.php                    # Gestão de contas de acesso
+│   │
+│   ├── # --- Módulo Operacional ---
+│   ├── timeclock.php                   # Registo de ponto (GPS)
+│   ├── escalas.php                     # Escalas de turnos
+│   ├── pontos.php                      # Registros de ponto (admin)
+│   ├── licencas.php                    # Licenças médicas
+│   ├── ferias.php                      # Gestão de férias
+│   │
+│   ├── # --- Módulo Financeiro ---
+│   ├── folha.php                       # Folha de pagamento (admin)
+│   ├── recibo_salario.php              # Recibo de salário (funcionário)
+│   ├── beneficios.php                  # Gestão de benefícios
+│   │
+│   ├── # --- Módulo Documentação ---
+│   ├── documentos.php                  # Arquivo digital
+│   ├── comunicados.php                 # Comunicados internos
+│   ├── uniformes.php                   # EPIs e uniformes
+│   │
+│   ├── # --- Módulo Talentos ---
+│   ├── avaliacoes.php                  # Avaliações 360°
+│   ├── treinamentos.php                # Gestão de treinamentos
+│   ├── vagas.php                       # Publicação de vagas
+│   ├── candidatos.php                  # Gestão de candidatos
+│   │
+│   ├── # --- Perfil & Config ---
+│   ├── perfil.php                      # Perfil do utilizador logado
+│   ├── perfil_colaborador.php          # Perfil público de colegas (busca)
+│   ├── config.php                      # Configurações do sistema (admin)
+│   ├── relatorios.php                  # Relatórios (admin)
+│   ├── advertencias.php                # Advertências disciplinares
+│   ├── alterar_senha.php               # Alteração de senha
+│   ├── notificacoes.php                # Central de notificações
+│   │
+│   ├── # --- API REST ---
+│   ├── api/
+│   │   ├── busca_global.php            # Busca global (Ctrl+K)
+│   │   ├── notifications.php           # API de notificações
+│   │   ├── timeclock.php               # API de ponto
+│   │   ├── upload_foto.php             # Upload de foto
+│   │   └── rg.php                      # API de carteira profissional
+│   │
+│   ├── # --- Layout & Assets ---
+│   ├── includes/
+│   │   ├── sidebar.php                 # Menu lateral reutilizável
+│   │   └── topbar.php                  # Barra superior com busca e notificações
+│   ├── css/
+│   │   └── style-2026.css              # Design system completo (CSS variables)
+│   ├── js/
+│   │   └── app-2026.js                 # Interatividade (tema, busca, menus)
+│   └── assets/
+│       └── img/                        # Imagens e banners
 │
-├── docs/                         # Documentação e referências do TCC
-├── composer.json
+├── database/                           # Banco de dados
+│   ├── schema.sql                      # Schema completo MySQL (16 tabelas)
+│   ├── schema_sqlite.sql               # Schema SQLite (fallback automático)
+│   └── farmacia_valodia_rg.db          # Banco SQLite local (dev)
+│
+├── composer.json                       # Dependências PHP (PSR-4, TCPDF)
+├── LICENSE                             # GNU GPL v3.0
 └── README.md
 ```
 

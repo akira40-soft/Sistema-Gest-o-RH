@@ -26,39 +26,44 @@ try {
     $searchTerm = "%$query%";
     $results = [];
 
+    $userRole = $auth->getUserRole();
+    $isAdmin = $userRole !== 'funcionario';
+
     // Buscar funcionários
+    $funcUrl = $isAdmin ? 'funcionarios.php?action=view&id=' : 'perfil_colaborador.php?id=';
     $stmt = $db->prepare("
         SELECT id, nome_completo as nome, 'Funcionário' as tipo,
-               CONCAT('funcionarios.php?action=view&id=', id) as url
+               CONCAT(:url, id) as url
         FROM funcionarios
         WHERE (nome_completo LIKE :q1 OR cpf LIKE :q2 OR email LIKE :q3)
           AND status = 'ativo'
         LIMIT 5
     ");
-    $stmt->execute([':q1' => $searchTerm, ':q2' => $searchTerm, ':q3' => $searchTerm]);
+    $stmt->execute([':q1' => $searchTerm, ':q2' => $searchTerm, ':q3' => $searchTerm, ':url' => $funcUrl]);
     $results = array_merge($results, $stmt->fetchAll());
 
-    // Buscar departamentos
-    $stmt = $db->prepare("
-        SELECT id, nome, 'Departamento' as tipo,
-               CONCAT('departamentos.php?id=', id) as url
-        FROM departamentos
-        WHERE nome LIKE :q1 AND ativo = 1
-        LIMIT 3
-    ");
-    $stmt->execute([':q1' => $searchTerm]);
-    $results = array_merge($results, $stmt->fetchAll());
+    // Buscar departamentos e cargos apenas para admins
+    if ($isAdmin) {
+        $stmt = $db->prepare("
+            SELECT id, nome, 'Departamento' as tipo,
+                   CONCAT('departamentos.php?id=', id) as url
+            FROM departamentos
+            WHERE nome LIKE :q1 AND ativo = 1
+            LIMIT 3
+        ");
+        $stmt->execute([':q1' => $searchTerm]);
+        $results = array_merge($results, $stmt->fetchAll());
 
-    // Buscar cargos
-    $stmt = $db->prepare("
-        SELECT id, nome, 'Cargo' as tipo,
-               CONCAT('cargos.php?id=', id) as url
-        FROM cargos
-        WHERE nome LIKE :q1 AND ativo = 1
-        LIMIT 3
-    ");
-    $stmt->execute([':q1' => $searchTerm]);
-    $results = array_merge($results, $stmt->fetchAll());
+        $stmt = $db->prepare("
+            SELECT id, nome, 'Cargo' as tipo,
+                   CONCAT('cargos.php?id=', id) as url
+            FROM cargos
+            WHERE nome LIKE :q1 AND ativo = 1
+            LIMIT 3
+        ");
+        $stmt->execute([':q1' => $searchTerm]);
+        $results = array_merge($results, $stmt->fetchAll());
+    }
 
     echo json_encode([
         'success' => true,

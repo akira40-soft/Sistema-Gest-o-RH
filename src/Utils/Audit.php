@@ -32,7 +32,7 @@ class Audit
 
             $stmt = $db->prepare("
                 INSERT INTO audit_logs
-                  (user_id, action, resource, resource_id, details, ip_address, user_agent)
+                  (user_id, acao, entidade, entidade_id, detalhes, ip_address, user_agent)
                 VALUES
                   (:uid, :acao, :ent, :eid, :det, :ip, :ua)
             ");
@@ -63,7 +63,7 @@ class Audit
             FROM audit_logs a
             LEFT JOIN usuarios u ON a.user_id = u.id
             WHERE a.user_id = :uid
-            ORDER BY a.created_at DESC
+            ORDER BY a.criado_em DESC
             LIMIT :lim
         ");
         $stmt->bindValue(':uid', $userId, \PDO::PARAM_INT);
@@ -82,8 +82,8 @@ class Audit
             SELECT a.*, u.username
             FROM audit_logs a
             LEFT JOIN usuarios u ON a.user_id = u.id
-            WHERE a.resource = :ent AND a.resource_id = :eid
-            ORDER BY a.created_at DESC
+            WHERE a.entidade = :ent AND a.entidade_id = :eid
+            ORDER BY a.criado_em DESC
             LIMIT :lim
         ");
         $stmt->bindValue(':ent', $entidade);
@@ -103,7 +103,7 @@ class Audit
             SELECT a.*, u.username
             FROM audit_logs a
             LEFT JOIN usuarios u ON a.user_id = u.id
-            ORDER BY a.created_at DESC
+            ORDER BY a.criado_em DESC
             LIMIT :lim
         ");
         $stmt->bindValue(':lim', $limit, \PDO::PARAM_INT);

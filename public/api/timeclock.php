@@ -21,6 +21,8 @@ try {
 
     $funcionarioId = $data['funcionario_id'] ?? null;
     $tipo = $data['tipo'] ?? $data['tipo_evento'] ?? null;
+    $lat = !empty($data['latitude']) ? (float)$data['latitude'] : null;
+    $lon = !empty($data['longitude']) ? (float)$data['longitude'] : null;
 
     if (!$funcionarioId || !$tipo) {
         throw new Exception('Dados incompletos');
@@ -51,14 +53,12 @@ try {
         }
 
         if ($existing) {
-            $stmt = $db->prepare("UPDATE registros_ponto SET hora_entrada = ?, tipo = 'presenca' WHERE id = ?");
-            $stmt->execute([$now, $existing['id']]);
+            $stmt = $db->prepare("UPDATE registros_ponto SET hora_entrada = ?, tipo = 'presenca', metodo_registro = 'web', gps_latitude = ?, gps_longitude = ? WHERE id = ?");
+            $stmt->execute([$now, $lat, $lon, $existing['id']]);
         } else {
-            $stmt = $db->prepare("INSERT INTO registros_ponto (funcionario_id, data, hora_entrada, tipo) VALUES (?, ?, ?, 'presenca')");
-            $stmt->execute([$funcionarioId, $today, $now]);
+            $stmt = $db->prepare("INSERT INTO registros_ponto (funcionario_id, data, hora_entrada, tipo, metodo_registro, gps_latitude, gps_longitude) VALUES (?, ?, ?, 'presenca', 'web', ?, ?)");
+            $stmt->execute([$funcionarioId, $today, $now, $lat, $lon]);
         }
-
-        Audit::create('ponto', $funcionarioId, "Entrada registada às $now");
 
         echo json_encode([
             'success' => true,
@@ -76,8 +76,6 @@ try {
 
         $stmt = $db->prepare("UPDATE registros_ponto SET hora_saida = ? WHERE id = ?");
         $stmt->execute([$now, $existing['id']]);
-
-        Audit::create('ponto', $funcionarioId, "Saída registada às $now");
 
         echo json_encode([
             'success' => true,

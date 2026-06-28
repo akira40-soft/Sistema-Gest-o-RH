@@ -90,7 +90,7 @@ try {
         try {
             $db = $db ?? Database::getInstance()->getConnection();
             $adminName = $auth->getUsername() ?? 'admin';
-            $db->prepare("INSERT INTO audit_logs (acao, tabela, registro_id, detalhes, usuario_id, criado_em) VALUES ('create', 'usuarios', :rid, :d, :uid, NOW())")
+            $db->prepare("INSERT INTO audit_logs (action, resource, resource_id, details, user_id) VALUES ('create', 'usuarios', :rid, :d, :uid)")
                 ->execute([':rid' => $newUserId, ':d' => "Conta criada: $username (cargo: $tipo_acesso) por $adminName", ':uid' => $auth->getUserId()]);
         } catch (\Throwable $e) {}
     }

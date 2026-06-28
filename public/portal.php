@@ -34,8 +34,8 @@ $funcId = $func['id'];
 $mensagemPonto = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao']) && $_POST['acao'] === 'bater_ponto') {
     $tipo = $_POST['tipo'] ?? '';
-    $lat = $_POST['latitude'] ?? null;
-    $lon = $_POST['longitude'] ?? null;
+    $lat = !empty($_POST['latitude']) ? (float)$_POST['latitude'] : null;
+    $lon = !empty($_POST['longitude']) ? (float)$_POST['longitude'] : null;
 
     if (!in_array($tipo, ['entrada', 'saida'])) {
         $mensagemPonto = 'Tipo inválido.';
@@ -50,11 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao']) && $_POST['ac
                     $mensagemPonto = 'Entrada já registrada hoje.';
                 } else {
                     if ($hoje) {
-                        $upd = $db->prepare("UPDATE registros_ponto SET hora_entrada = NOW(), metodo = 'portal', observacoes = :obs WHERE id = :id");
-                        $upd->execute([':id' => $hoje['id'], ':obs' => "GPS: $lat,$lon"]);
+                        $upd = $db->prepare("UPDATE registros_ponto SET hora_entrada = NOW(), metodo_registro = 'web', gps_latitude = :lat, gps_longitude = :lon WHERE id = :id");
+                        $upd->execute([':id' => $hoje['id'], ':lat' => $lat, ':lon' => $lon]);
                     } else {
-                        $ins = $db->prepare("INSERT INTO registros_ponto (funcionario_id, data, hora_entrada, metodo, observacoes) VALUES (:fid, CURRENT_DATE, NOW(), 'portal', :obs)");
-                        $ins->execute([':fid' => $funcId, ':obs' => "GPS: $lat,$lon"]);
+                        $ins = $db->prepare("INSERT INTO registros_ponto (funcionario_id, data, hora_entrada, tipo, metodo_registro, gps_latitude, gps_longitude) VALUES (:fid, CURRENT_DATE, NOW(), 'presenca', 'web', :lat, :lon)");
+                        $ins->execute([':fid' => $funcId, ':lat' => $lat, ':lon' => $lon]);
                     }
                     $mensagemPonto = 'Entrada registrada com sucesso!';
                 }
@@ -64,8 +64,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao']) && $_POST['ac
                 } elseif ($hoje['hora_saida']) {
                     $mensagemPonto = 'Saída já registrada hoje.';
                 } else {
-                    $upd = $db->prepare("UPDATE registros_ponto SET hora_saida = NOW(), observacoes = CONCAT(observacoes, ' | Saída: ', :obs) WHERE id = :id");
-                    $upd->execute([':id' => $hoje['id'], ':obs' => "GPS: $lat,$lon"]);
+                    $upd = $db->prepare("UPDATE registros_ponto SET hora_saida = NOW() WHERE id = :id");
+                    $upd->execute([':id' => $hoje['id']]);
                     $mensagemPonto = 'Saída registrada com sucesso!';
                 }
             }

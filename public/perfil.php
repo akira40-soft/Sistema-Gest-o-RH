@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ud = $user_data->fetch();
 }
 
-$audits = $db->prepare("SELECT * FROM audit_logs WHERE user_id = :u ORDER BY criado_em DESC LIMIT 15");
+$audits = $db->prepare("SELECT * FROM audit_logs WHERE user_id = :u ORDER BY created_at DESC LIMIT 15");
 $audits->execute([':u' => $user_id]);
 $audits = $audits->fetchAll();
 

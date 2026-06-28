@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!empty($ud['foto']) && file_exists(__DIR__ . '/' . $ud['foto'])) {
                     @unlink(__DIR__ . '/' . $ud['foto']);
                 }
-                $db->prepare("UPDATE funcionarios SET foto=:f, updated_foto_at=NOW() WHERE id=:id")
+                $db->prepare("UPDATE funcionarios SET foto=:f WHERE id=:id")
                     ->execute([':f' => $relPath, ':id' => $ud['func_id']]);
             } else {
                 $db->prepare("UPDATE usuarios SET foto=:f WHERE id=:id")
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 @unlink(__DIR__ . '/' . $ud['foto']);
             }
             if ($ud && $ud['func_id']) {
-                $db->prepare("UPDATE funcionarios SET foto=NULL, updated_foto_at=NULL WHERE id=:id")
+                $db->prepare("UPDATE funcionarios SET foto=NULL WHERE id=:id")
                     ->execute([':id' => $ud['func_id']]);
             } else {
                 $db->prepare("UPDATE usuarios SET foto=NULL WHERE id=:id")

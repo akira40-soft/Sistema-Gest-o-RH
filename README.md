@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/assets/img/print%20do%20sistema.png" alt="Sistema de Gestão de RH - Farmácia Gingongo RG" width="100%">
+  <img src="https://raw.githubusercontent.com/akira40-soft/Sistema-Gest-o-RH/main/public/assets/img/print%20do%20sistema.png" alt="Sistema de Gestão de RH - Farmácia Gingongo RG" width="100%">
 </p>
 
 <h1 align="center">Farmácia Gingongo RG — Sistema de Gestão de RH</h1>

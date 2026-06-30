@@ -35,7 +35,7 @@ try {
         SELECT id, nome_completo as nome, 'Funcionário' as tipo,
                CONCAT(:url, id) as url
         FROM funcionarios
-        WHERE (nome_completo LIKE :q1 OR cpf LIKE :q2 OR email LIKE :q3)
+        WHERE (nome_completo LIKE :q1 OR bi LIKE :q2 OR email LIKE :q3)
           AND status = 'ativo'
         LIMIT 5
     ");

@@ -46,7 +46,7 @@ class EmployeeApproval
                 ea.criado_em,
                 f.nome_completo,
                 f.email,
-                f.cpf,
+                f.bi,
                 c.nome as cargo_nome,
                 d.nome as departamento_nome
             FROM employee_approvals ea
@@ -56,7 +56,7 @@ class EmployeeApproval
             WHERE ea.status = 'pendente'
             ORDER BY ea.criado_em DESC
         ");
-        
+
         $stmt->execute();
         return $stmt->fetchAll();
     }
@@ -68,11 +68,11 @@ class EmployeeApproval
     {
         $conn = $this->db->getConnection();
         $stmt = $conn->prepare("
-            SELECT 
+            SELECT
                 ea.*,
                 f.nome_completo,
                 f.email,
-                f.cpf,
+                f.bi,
                 f.data_nascimento,
                 c.nome as cargo_nome,
                 d.nome as departamento_nome,

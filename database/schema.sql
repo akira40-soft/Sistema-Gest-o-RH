@@ -1,15 +1,16 @@
 -- ============================================================================
--- SISTEMA DE GESTÃO RG - FARMÁCIA VALÓDIA
+-- SISTEMA DE GESTÃO DE RH - FARMÁCIA GINGONGO RG
 -- Script de Criação do Banco de Dados
 -- Baseado no TCC: "Desenvolvimento de um sistema de gestão para RH"
+-- Adaptado à legislação trabalhista de Angola
 -- ============================================================================
 
 -- Criar banco de dados se não existir
-CREATE DATABASE IF NOT EXISTS farmacia_valodia_rg
+CREATE DATABASE IF NOT EXISTS farmacia_gingongo_rh
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 
-USE farmacia_valodia_rg;
+USE farmacia_gingongo_rh;
 
 -- ============================================================================
 -- 1. TABELA: departamentos
@@ -73,22 +74,21 @@ CREATE TABLE IF NOT EXISTS usuarios (
 CREATE TABLE IF NOT EXISTS funcionarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome_completo VARCHAR(200) NOT NULL,
-    cpf VARCHAR(14) NOT NULL UNIQUE,
-    rg VARCHAR(20),
+    bi VARCHAR(30) NOT NULL UNIQUE,
     data_nascimento DATE NOT NULL,
     sexo ENUM('M', 'F', 'Outro') NOT NULL,
     telefone VARCHAR(20),
     email VARCHAR(100),
     endereco TEXT,
-    
+
     -- Dados Profissionais
     departamento_id INT NOT NULL,
     cargo_id INT NOT NULL,
     data_admissao DATE NOT NULL,
     data_demissao DATE NULL,
-    tipo_contrato ENUM('CLT', 'PJ', 'Estagiario', 'Temporario') DEFAULT 'CLT',
+    tipo_contrato ENUM('Tempo_Indeterminado', 'Tempo_Determinado', 'Estagio', 'Temporario') DEFAULT 'Tempo_Indeterminado',
     status ENUM('ativo', 'ferias', 'afastado', 'demitido') DEFAULT 'ativo',
-    
+
     -- Financeiro
     salario_atual DECIMAL(10, 2) NOT NULL,
     banco VARCHAR(100),
@@ -96,7 +96,6 @@ CREATE TABLE IF NOT EXISTS funcionarios (
     conta VARCHAR(30),
     iban VARCHAR(50) NULL,
     nif_angolano VARCHAR(20) NULL,
-    bi VARCHAR(30) NULL,
     foto VARCHAR(500) NULL,
     
     -- Vinculação com usuário do sistema (opcional)
@@ -112,7 +111,7 @@ CREATE TABLE IF NOT EXISTS funcionarios (
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL,
     
     -- Índices
-    INDEX idx_cpf (cpf),
+    INDEX idx_bi (bi),
     INDEX idx_nome (nome_completo),
     INDEX idx_status (status),
     INDEX idx_departamento (departamento_id),
@@ -169,13 +168,13 @@ CREATE TABLE IF NOT EXISTS folha_pagamento (
     -- Descontos
     desconto_faltas DECIMAL(10, 2) DEFAULT 0.00,
     desconto_inss DECIMAL(10, 2) DEFAULT 0.00,
-    desconto_irrf DECIMAL(10, 2) DEFAULT 0.00,
+    desconto_irt DECIMAL(10, 2) DEFAULT 0.00,
     outros_descontos DECIMAL(10, 2) DEFAULT 0.00,
-    
-    -- Cálculos
+
+    -- Cálculos (IRT = Imposto sobre o Rendimento do Trabalho - Lei Angolana)
     total_proventos DECIMAL(10, 2) AS (salario_base + horas_extras + bonus) STORED,
-    total_descontos DECIMAL(10, 2) AS (desconto_faltas + desconto_inss + desconto_irrf + outros_descontos) STORED,
-    salario_liquido DECIMAL(10, 2) AS (salario_base + horas_extras + bonus - desconto_faltas - desconto_inss - desconto_irrf - outros_descontos) STORED,
+    total_descontos DECIMAL(10, 2) AS (desconto_faltas + desconto_inss + desconto_irt + outros_descontos) STORED,
+    salario_liquido DECIMAL(10, 2) AS (salario_base + horas_extras + bonus - desconto_faltas - desconto_inss - desconto_irt - outros_descontos) STORED,
     
     -- Metadados
     data_processamento TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -240,21 +239,21 @@ INSERT IGNORE INTO cargos (nome, salario_base, nivel_hierarquico, descricao) VAL
 -- Inserir Usuários (Senhas: todos usam 'senha123' - hash bcrypt)
 -- Nota: Em produção, usar hash real. Aqui é apenas exemplo
 INSERT IGNORE INTO usuarios (username, password_hash, tipo_acesso, nome, email) VALUES
-('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'super_admin', 'Isaac Nascimento Quarenta', 'isaac@farmacia-valodia.ao'),
-('josemar_quarenta', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'super_admin', 'Josemar Quarenta', 'josemar@farmacia-valodia.ao'),
-('livenia', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'gestor_rh', 'Livenia Alexandra', 'livenia@farmacia-valodia.ao'),
-('jardel', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'funcionario', 'Jardel Ilunga P. Banoyo', 'jardel@farmacia-valodia.ao'),
-('ilda', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'lider_farmaceutico', 'Ilda Alexandra Livenia', 'ilda@farmacia-valodia.ao');
+('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'super_admin', 'Isaac Nascimento Quarenta', 'isaac@farmacia-gingongo.ao'),
+('josemar_quarenta', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'super_admin', 'Josemar Quarenta', 'josemar@farmacia-gingongo.ao'),
+('livenia', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'gestor_rh', 'Livenia Alexandra', 'livenia@farmacia-gingongo.ao'),
+('jardel', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'funcionario', 'Jardel Ilunga P. Banoyo', 'jardel@farmacia-gingongo.ao'),
+('ilda', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'lider_farmaceutico', 'Ilda Alexandra Livenia', 'ilda@farmacia-gingongo.ao');
 
--- Inserir Funcionários
-INSERT IGNORE INTO funcionarios (nome_completo, cpf, data_nascimento, sexo, telefone, email, departamento_id, cargo_id, data_admissao, salario_atual, status, usuario_id) VALUES
-('Isaac Nascimento Quarenta', '123.456.789-00', '1995-03-15', 'M', '+244 923 456 789', 'isaac@farmacia-valodia.ao', 3, 1, '2023-01-10', 8500.00, 'ativo', 2),
-('Ilda Alexandra Livénia', '234.567.890-11', '1992-07-22', 'F', '+244 924 567 890', 'ilda@farmacia-valodia.ao', 2, 4, '2023-02-01', 7000.00, 'ativo', 3),
-('Jardel Ilunga P. Banoyo', '345.678.901-22', '1998-11-05', 'M', '+244 925 678 901', 'jardel@farmacia-valodia.ao', 5, 6, '2023-03-15', 4500.00, 'ferias', 4),
-('Jared Armando', '456.789.012-33', '1996-05-18', 'M', '+244 926 789 012', 'jared@farmacia-valodia.ao', 3, 2, '2023-04-01', 5500.00, 'ativo', NULL),
-('Mauricio Manuel F. Chitula', '567.890.123-44', '1994-09-30', 'M', '+244 927 890 123', 'mauricio@farmacia-valodia.ao', 1, 3, '2023-05-10', 2500.00, 'ativo', NULL),
-('Francisco da Silva K. Chihamba', '678.901.234-55', '1997-12-12', 'M', '+244 928 901 234', 'francisco@farmacia-valodia.ao', 4, 7, '2023-06-20', 6000.00, 'ativo', NULL),
-('Vasco Alexandre', '789.012.345-66', '1993-02-28', 'M', '+244 929 012 345', 'vasco@farmacia-valodia.ao', 1, 3, '2023-07-05', 2500.00, 'ativo', NULL);
+-- Inserir Funcionários (usando BI angolano em vez de CPF)
+INSERT IGNORE INTO funcionarios (nome_completo, bi, data_nascimento, sexo, telefone, email, departamento_id, cargo_id, data_admissao, salario_atual, status, usuario_id) VALUES
+('Isaac Nascimento Quarenta', '001234567LA045', '1995-03-15', 'M', '+244 923 456 789', 'isaac@farmacia-gingongo.ao', 3, 1, '2023-01-10', 8500.00, 'ativo', 2),
+('Ilda Alexandra Livénia', '001234568LA045', '1992-07-22', 'F', '+244 924 567 890', 'ilda@farmacia-gingongo.ao', 2, 4, '2023-02-01', 7000.00, 'ativo', 3),
+('Jardel Ilunga P. Banoyo', '001234569LA045', '1998-11-05', 'M', '+244 925 678 901', 'jardel@farmacia-gingongo.ao', 5, 6, '2023-03-15', 4500.00, 'ferias', 4),
+('Jared Armando', '001234570LA045', '1996-05-18', 'M', '+244 926 789 012', 'jared@farmacia-gingongo.ao', 3, 2, '2023-04-01', 5500.00, 'ativo', NULL),
+('Mauricio Manuel F. Chitula', '001234571LA045', '1994-09-30', 'M', '+244 927 890 123', 'mauricio@farmacia-gingongo.ao', 1, 3, '2023-05-10', 2500.00, 'ativo', NULL),
+('Francisco da Silva K. Chihamba', '001234572LA045', '1997-12-12', 'M', '+244 928 901 234', 'francisco@farmacia-gingongo.ao', 4, 7, '2023-06-20', 6000.00, 'ativo', NULL),
+('Vasco Alexandre', '001234573LA045', '1993-02-28', 'M', '+244 929 012 345', 'vasco@farmacia-gingongo.ao', 1, 3, '2023-07-05', 2500.00, 'ativo', NULL);
 
 -- Inserir Registros de Ponto (última semana)
 INSERT IGNORE INTO registros_ponto (funcionario_id, data, hora_entrada, hora_saida, tipo) VALUES
@@ -288,10 +287,11 @@ INSERT IGNORE INTO registros_ponto (funcionario_id, data, hora_entrada, hora_sai
 
 -- View: Funcionários Ativos com Informações Completas
 CREATE OR REPLACE VIEW vw_funcionarios_ativos AS
-SELECT 
+SELECT
     f.id,
     f.nome_completo,
-    f.cpf,
+    f.bi,
+    f.nif_angolano,
     f.email,
     f.telefone,
     d.nome AS departamento,

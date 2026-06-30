@@ -34,7 +34,7 @@ try {
     $params = [];
 
     if (!empty($busca)) {
-        $sql .= " AND (f.nome_completo LIKE :busca1 OR f.cpf LIKE :busca2 OR f.email LIKE :busca3)";
+        $sql .= " AND (f.nome_completo LIKE :busca1 OR f.bi LIKE :busca2 OR f.email LIKE :busca3)";
         $params[':busca1'] = "%$busca%";
         $params[':busca2'] = "%$busca%";
         $params[':busca3'] = "%$busca%";
@@ -179,7 +179,7 @@ $pageSubtitle = count($funcionarios) . ' colaboradores encontrados';
                                                     </div>
                                                     <div class="user-cell-info">
                                                         <strong><?php echo htmlspecialchars($f['nome_completo']); ?></strong>
-                                                        <small><?php echo htmlspecialchars($f['email'] ?? $f['cpf'] ?? '—'); ?></small>
+                                                        <small><?php echo htmlspecialchars($f['email'] ?? $f['bi'] ?? '—'); ?></small>
                                                     </div>
                                                 </div>
                                             </td>

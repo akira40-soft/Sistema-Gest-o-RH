@@ -39,17 +39,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception("Sexo inválido.");
         }
 
-        $tipoContratoValidos = ['CLT', 'prazo_determinado', 'estagio', 'temporario', 'prestacao_servicos'];
-        $tipoContrato = in_array($_POST['tipo_contrato'] ?? '', $tipoContratoValidos) ? $_POST['tipo_contrato'] : 'CLT';
+        $tipoContratoValidos = ['Tempo_Indeterminado', 'Tempo_Determinado', 'Estagio', 'Temporario'];
+        $tipoContrato = in_array($_POST['tipo_contrato'] ?? '', $tipoContratoValidos) ? $_POST['tipo_contrato'] : 'Tempo_Indeterminado';
 
         $sql = "INSERT INTO funcionarios (
-            nome_completo, bi, cpf, rg, data_nascimento, sexo,
+            nome_completo, bi, data_nascimento, sexo,
             telefone, email, endereco,
             departamento_id, cargo_id, data_admissao, tipo_contrato, status,
             salario_atual, banco, agencia, conta, iban,
             nif_angolano
         ) VALUES (
-            :nome_completo, :bi, :cpf, :rg, :data_nascimento, :sexo,
+            :nome_completo, :bi, :data_nascimento, :sexo,
             :telefone, :email, :endereco,
             :departamento_id, :cargo_id, :data_admissao, :tipo_contrato, 'ativo',
             :salario_atual, :banco, :agencia, :conta, :iban,
@@ -60,8 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([
             ':nome_completo'              => trim($_POST['nome_completo']),
             ':bi'                         => trim($_POST['bi']),
-            ':cpf'                        => trim($_POST['cpf'] ?? '') ?: trim($_POST['bi']),
-            ':rg'                         => trim($_POST['rg'] ?? '') ?: trim($_POST['bi']),
             ':data_nascimento'            => $_POST['data_nascimento'],
             ':sexo'                       => $_POST['sexo'],
             ':telefone'                   => trim($_POST['telefone'] ?? '') ?: null,

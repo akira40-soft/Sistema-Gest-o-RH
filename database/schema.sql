@@ -237,13 +237,13 @@ INSERT IGNORE INTO cargos (nome, salario_base, nivel_hierarquico, descricao) VAL
 ('Gerente de Estoque', 6000.00, 'gerencial', 'Gestão de estoque e logística');
 
 -- Inserir Usuários (Senhas: todos usam 'senha123' - hash bcrypt)
--- Nota: Em produção, usar hash real. Aqui é apenas exemplo
+-- Hash gerado com: password_hash('senha123', PASSWORD_BCRYPT)
 INSERT IGNORE INTO usuarios (username, password_hash, tipo_acesso, nome, email) VALUES
-('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'super_admin', 'Isaac Nascimento Quarenta', 'isaac@farmacia-gingongo.ao'),
-('josemar_quarenta', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'super_admin', 'Josemar Quarenta', 'josemar@farmacia-gingongo.ao'),
-('livenia', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'gestor_rh', 'Livenia Alexandra', 'livenia@farmacia-gingongo.ao'),
-('jardel', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'funcionario', 'Jardel Ilunga P. Banoyo', 'jardel@farmacia-gingongo.ao'),
-('ilda', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'lider_farmaceutico', 'Ilda Alexandra Livenia', 'ilda@farmacia-gingongo.ao');
+('admin', '$2y$10$YyeRl3YUCPsQl1WrsOcaqeDyLFBQyANCwVFirGLI6lY9ZcULkuEuK', 'super_admin', 'Isaac Nascimento Quarenta', 'isaac@farmacia-gingongo.ao'),
+('josemar_quarenta', '$2y$10$YyeRl3YUCPsQl1WrsOcaqeDyLFBQyANCwVFirGLI6lY9ZcULkuEuK', 'super_admin', 'Josemar Quarenta', 'josemar@farmacia-gingongo.ao'),
+('livenia', '$2y$10$YyeRl3YUCPsQl1WrsOcaqeDyLFBQyANCwVFirGLI6lY9ZcULkuEuK', 'gestor_rh', 'Livenia Alexandra', 'livenia@farmacia-gingongo.ao'),
+('jardel', '$2y$10$YyeRl3YUCPsQl1WrsOcaqeDyLFBQyANCwVFirGLI6lY9ZcULkuEuK', 'funcionario', 'Jardel Ilunga P. Banoyo', 'jardel@farmacia-gingongo.ao'),
+('ilda', '$2y$10$YyeRl3YUCPsQl1WrsOcaqeDyLFBQyANCwVFirGLI6lY9ZcULkuEuK', 'lider_farmaceutico', 'Ilda Alexandra Livenia', 'ilda@farmacia-gingongo.ao');
 
 -- Inserir Funcionários (usando BI angolano em vez de CPF)
 INSERT IGNORE INTO funcionarios (nome_completo, bi, data_nascimento, sexo, telefone, email, departamento_id, cargo_id, data_admissao, salario_atual, status, usuario_id) VALUES

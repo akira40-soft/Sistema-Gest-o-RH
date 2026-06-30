@@ -72,15 +72,14 @@ if (isset($_GET['export'])) {
         $rows2 = $db->query("SELECT f.nome_completo, d.nome as departamento,
             SUM(CASE WHEN p.tipo='presenca' THEN 1 ELSE 0 END) as dias_trabalhados,
             SUM(CASE WHEN p.tipo LIKE 'falta%' THEN 1 ELSE 0 END) as faltas,
-            SUM(p.horas_extras) as horas_extras,
             SUM(p.horas_trabalhadas) as horas_trabalhadas
             FROM funcionarios f
             LEFT JOIN registros_ponto p ON f.id = p.funcionario_id AND YEAR(p.data) = YEAR(CURDATE())
             LEFT JOIN departamentos d ON f.departamento_id = d.id
             WHERE f.status = 'ativo'
             GROUP BY f.id ORDER BY f.nome_completo")->fetchAll();
-        $headers = ['Funcionário', 'Departamento', 'Dias Trabalhados', 'Faltas', 'Horas Extras', 'Horas Trabalhadas'];
-        $data = array_map(fn($r) => [$r['nome_completo'], $r['departamento'], $r['dias_trabalhados'] ?? 0, $r['faltas'] ?? 0, $r['horas_extras'] ?? 0, $r['horas_trabalhadas'] ?? 0], $rows2);
+        $headers = ['Funcionário', 'Departamento', 'Dias Trabalhados', 'Faltas', 'Horas Trabalhadas'];
+        $data = array_map(fn($r) => [$r['nome_completo'], $r['departamento'], $r['dias_trabalhados'] ?? 0, $r['faltas'] ?? 0, $r['horas_trabalhadas'] ?? 0], $rows2);
         exportCsv('assiduidade.csv', $headers, $data);
     }
 }
@@ -340,7 +339,6 @@ if (isset($_GET['export'])) {
                     $rows = $db->query("SELECT f.nome_completo, d.nome as departamento,
                         SUM(CASE WHEN p.tipo='presenca' THEN 1 ELSE 0 END) as dias_trabalhados,
                         SUM(CASE WHEN p.tipo LIKE 'falta%' THEN 1 ELSE 0 END) as faltas,
-                        COALESCE(SUM(p.horas_extras), 0) as horas_extras,
                         COALESCE(SUM(p.horas_trabalhadas), 0) as horas_trabalhadas
                         FROM funcionarios f
                         LEFT JOIN registros_ponto p ON f.id = p.funcionario_id AND YEAR(p.data) = YEAR(CURDATE())
@@ -361,7 +359,7 @@ if (isset($_GET['export'])) {
                     <div class="card">
                         <div class="table-responsive">
                             <table class="data-table">
-                                <thead><tr><th>Funcionário</th><th>Departamento</th><th>Dias Trab.</th><th>Faltas</th><th>Horas Extras</th><th>Horas Trab.</th></tr></thead>
+                                <thead><tr><th>Funcionário</th><th>Departamento</th><th>Dias Trab.</th><th>Faltas</th><th>Horas Trab.</th></tr></thead>
                                 <tbody>
                                     <?php foreach ($rows as $r): ?>
                                         <tr>
@@ -369,7 +367,6 @@ if (isset($_GET['export'])) {
                                             <td><?php echo htmlspecialchars($r['departamento'] ?? '—'); ?></td>
                                             <td><?php echo (int)$r['dias_trabalhados']; ?></td>
                                             <td style="color: var(--danger);"><?php echo (int)$r['faltas']; ?></td>
-                                            <td style="color: var(--warning);"><?php echo number_format($r['horas_extras'], 1); ?>h</td>
                                             <td><?php echo number_format($r['horas_trabalhadas'], 1); ?>h</td>
                                         </tr>
                                     <?php endforeach; ?>

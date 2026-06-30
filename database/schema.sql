@@ -542,4 +542,161 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     INDEX idx_entidade (entidade, entidade_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ============================================================================
+-- 17. TABELA: turnos
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS turnos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    hora_inicio TIME NOT NULL,
+    hora_fim TIME NOT NULL,
+    tipo ENUM('manha', 'tarde', 'noite', 'madrugada') DEFAULT 'manha',
+    duracao_horas DECIMAL(4,2) DEFAULT 8.00,
+    intervalo_minutos INT DEFAULT 60,
+    ativo BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- 18. TABELA: escalas
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS escalas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    funcionario_id INT NOT NULL,
+    turno_id INT NOT NULL,
+    data DATE NOT NULL,
+    status ENUM('prevista', 'confirmada', 'cancelada', 'substituida') DEFAULT 'prevista',
+    motivo_substituicao TEXT,
+    criado_por INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (funcionario_id) REFERENCES funcionarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (turno_id) REFERENCES turnos(id) ON DELETE RESTRICT,
+    FOREIGN KEY (criado_por) REFERENCES usuarios(id) ON DELETE SET NULL,
+    UNIQUE KEY unique_funcionario_data_turno (funcionario_id, data, turno_id),
+    INDEX idx_data (data),
+    INDEX idx_turno (turno_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- 19. TABELA: comunicados
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS comunicados (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(200) NOT NULL,
+    conteudo TEXT NOT NULL,
+    tipo ENUM('informativo', 'urgente', 'evento', 'policy') DEFAULT 'informativo',
+    prioridade ENUM('normal', 'importante', 'critica') DEFAULT 'normal',
+    destinatarios ENUM('todos', 'departamento', 'cargo', 'especificos') DEFAULT 'todos',
+    departamento_id INT,
+    cargo_id INT,
+    publicado_por INT,
+    data_publicacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    data_expiracao DATE,
+    ativo BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (departamento_id) REFERENCES departamentos(id) ON DELETE SET NULL,
+    FOREIGN KEY (cargo_id) REFERENCES cargos(id) ON DELETE SET NULL,
+    FOREIGN KEY (publicado_por) REFERENCES usuarios(id) ON DELETE SET NULL,
+    INDEX idx_ativo (ativo),
+    INDEX idx_tipo (tipo)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- 20. TABELA: candidaturas
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS candidaturas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    vaga_id INT NOT NULL,
+    nome_completo VARCHAR(200) NOT NULL,
+    email VARCHAR(100),
+    telefone VARCHAR(20),
+    bi VARCHAR(30),
+    curriculum TEXT,
+    pontuacao DECIMAL(3,1),
+    observacoes TEXT,
+    data_entrevista DATE,
+    entrevistado_por INT,
+    status ENUM('nova', 'em_analise', 'pre_selecionada', 'entrevista_agendada', 'aprovada', 'rejeitada', 'contratada') DEFAULT 'nova',
+    data_candidatura TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (vaga_id) REFERENCES vagas(id) ON DELETE CASCADE,
+    FOREIGN KEY (entrevistado_por) REFERENCES usuarios(id) ON DELETE SET NULL,
+    INDEX idx_vaga (vaga_id),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- 21. TABELA: avaliacoes
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS avaliacoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    funcionario_id INT NOT NULL,
+    avaliador_id INT,
+    periodo_inicio DATE NOT NULL,
+    periodo_fim DATE NOT NULL,
+    tipo ENUM('anual', 'semestral', 'trimestral', 'admissao') DEFAULT 'anual',
+    atendimento_cliente INT DEFAULT 0,
+    conhecimento_tecnico INT DEFAULT 0,
+    pontualidade INT DEFAULT 0,
+    trabalho_equipe INT DEFAULT 0,
+    cumprimento_metas INT DEFAULT 0,
+    proatividade INT DEFAULT 0,
+    nota_final DECIMAL(3,1) DEFAULT 0.0,
+    classificacao ENUM('insuficiente', 'regular', 'bom', 'muito_bom', 'excelente') DEFAULT 'regular',
+    pontos_fortes TEXT,
+    pontos_melhoria TEXT,
+    plano_desenvolvimento TEXT,
+    status ENUM('rascunho', 'finalizada', 'assinada') DEFAULT 'rascunho',
+    data_assinatura_avaliador TIMESTAMP NULL,
+    data_assinatura_funcionario TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (funcionario_id) REFERENCES funcionarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (avaliador_id) REFERENCES usuarios(id) ON DELETE SET NULL,
+    INDEX idx_funcionario (funcionario_id),
+    INDEX idx_periodo (periodo_inicio, periodo_fim)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- DADOS SEED PARA TURNOS
+-- ============================================================================
+INSERT IGNORE INTO turnos (nome, hora_inicio, hora_fim, tipo, duracao_horas, intervalo_minutos) VALUES
+('Turno Manhã', '08:00:00', '14:00:00', 'manha', 6.00, 30),
+('Turno Tarde', '14:00:00', '20:00:00', 'tarde', 6.00, 30),
+('Turno Noite', '20:00:00', '02:00:00', 'noite', 6.00, 30);
+
+-- ============================================================================
+-- 22. TABELA: advertencias
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS advertencias (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    funcionario_id INT NOT NULL,
+    tipo ENUM('verbal', 'escrita', 'suspensao', 'despedimento') DEFAULT 'verbal',
+    gravidade ENUM('leve', 'moderada', 'grave', 'muito_grave') DEFAULT 'leve',
+    motivo VARCHAR(500) NOT NULL,
+    descricao TEXT,
+    data_ocorrencia DATE NOT NULL,
+    data_fim_suspensao DATE,
+    dias_suspensao INT DEFAULT 0,
+    status ENUM('pendente', 'aprovada_rh', 'ativa', 'revogada') DEFAULT 'pendente',
+    aplicada_por INT,
+    aprovada_rh_por INT,
+    aprovada_rh_em TIMESTAMP NULL,
+    aprovada_direcao_por INT,
+    aprovada_direcao_em TIMESTAMP NULL,
+    observacoes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (funcionario_id) REFERENCES funcionarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (aplicada_por) REFERENCES usuarios(id) ON DELETE SET NULL,
+    FOREIGN KEY (aprovada_rh_por) REFERENCES usuarios(id) ON DELETE SET NULL,
+    FOREIGN KEY (aprovada_direcao_por) REFERENCES usuarios(id) ON DELETE SET NULL,
+    INDEX idx_funcionario (funcionario_id),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 SELECT 'Banco de dados criado com sucesso!' AS mensagem;

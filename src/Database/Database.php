@@ -10,7 +10,7 @@ use PDOException;
  * Farmácia Gingongo RG
  *
  * Configuração:
- *  - Banco: farmacia_valodia_rg
+ *  - Banco: farmacia_gingongo_rh
  *  - Charset: UTF-8
  *  - Error Mode: Exceptions
  */
@@ -22,7 +22,7 @@ class Database
 
     // Configurações
     private $host = 'localhost';
-    private $db_name = 'farmacia_valodia_rg';
+    private $db_name = 'farmacia_gingongo_rh';
     private $username = 'root';
     private $password = '';
     private $charset = 'utf8mb4';
@@ -60,7 +60,7 @@ class Database
     private function initSQLite()
     {
         try {
-            $db_path = __DIR__ . '/../../database/farmacia_valodia_rg.db';
+            $db_path = __DIR__ . '/../../database/farmacia_gingongo_rh.db';
             $dir = dirname($db_path);
             if (!is_dir($dir)) @mkdir($dir, 0755, true);
 

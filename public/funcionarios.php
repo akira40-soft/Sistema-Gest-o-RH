@@ -211,7 +211,7 @@ $pageSubtitle = count($funcionarios) . ' colaboradores encontrados';
                                             </td>
                                             <td>
                                                 <div class="d-flex gap-1" style="justify-content: flex-end;">
-                                                    <a href="perfil.php?id=<?php echo $f['id']; ?>" class="btn btn-icon btn-secondary" title="Ver perfil">
+                                                    <a href="perfil_colaborador.php?id=<?php echo $f['id']; ?>" class="btn btn-icon btn-secondary" title="Ver perfil">
                                                         <i class="bi bi-eye"></i>
                                                     </a>
                                                     <a href="editar_funcionario.php?id=<?php echo $f['id']; ?>" class="btn btn-icon btn-secondary" title="Editar">

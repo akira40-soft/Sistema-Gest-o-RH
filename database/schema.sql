@@ -246,9 +246,10 @@ INSERT IGNORE INTO usuarios (username, password_hash, tipo_acesso, nome, email) 
 ('ilda', '$2y$10$YyeRl3YUCPsQl1WrsOcaqeDyLFBQyANCwVFirGLI6lY9ZcULkuEuK', 'lider_farmaceutico', 'Ilda Alexandra Livenia', 'ilda@farmacia-gingongo.ao');
 
 -- Inserir Funcionários (usando BI angolano em vez de CPF)
+-- usuario_id vincula ao login do sistema (id do usuário na tabela usuarios)
 INSERT IGNORE INTO funcionarios (nome_completo, bi, data_nascimento, sexo, telefone, email, departamento_id, cargo_id, data_admissao, salario_atual, status, usuario_id) VALUES
-('Isaac Nascimento Quarenta', '001234567LA045', '1995-03-15', 'M', '+244 923 456 789', 'isaac@farmacia-gingongo.ao', 3, 1, '2023-01-10', 8500.00, 'ativo', 2),
-('Ilda Alexandra Livénia', '001234568LA045', '1992-07-22', 'F', '+244 924 567 890', 'ilda@farmacia-gingongo.ao', 2, 4, '2023-02-01', 7000.00, 'ativo', 3),
+('Isaac Nascimento Quarenta', '001234567LA045', '1995-03-15', 'M', '+244 923 456 789', 'isaac@farmacia-gingongo.ao', 3, 1, '2023-01-10', 8500.00, 'ativo', 1),
+('Ilda Alexandra Livénia', '001234568LA045', '1992-07-22', 'F', '+244 924 567 890', 'ilda@farmacia-gingongo.ao', 2, 4, '2023-02-01', 7000.00, 'ativo', 5),
 ('Jardel Ilunga P. Banoyo', '001234569LA045', '1998-11-05', 'M', '+244 925 678 901', 'jardel@farmacia-gingongo.ao', 5, 6, '2023-03-15', 4500.00, 'ferias', 4),
 ('Jared Armando', '001234570LA045', '1996-05-18', 'M', '+244 926 789 012', 'jared@farmacia-gingongo.ao', 3, 2, '2023-04-01', 5500.00, 'ativo', NULL),
 ('Mauricio Manuel F. Chitula', '001234571LA045', '1994-09-30', 'M', '+244 927 890 123', 'mauricio@farmacia-gingongo.ao', 1, 3, '2023-05-10', 2500.00, 'ativo', NULL),

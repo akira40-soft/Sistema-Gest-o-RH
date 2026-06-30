@@ -23,7 +23,10 @@ if ($funcionarioId <= 0) {
 try {
     $stmt = $db->prepare("
         SELECT f.id, f.nome_completo, f.email, f.telefone, f.foto,
-               f.data_admissao, f.status, f.sexo,
+               f.data_admissao, f.status, f.sexo, f.bi, f.data_nascimento,
+               f.endereco, f.nif_angolano, f.tipo_contrato,
+               f.banco, f.agencia, f.conta, f.iban,
+               f.salario_atual,
                d.nome as departamento_nome, c.nome as cargo_nome
         FROM funcionarios f
         LEFT JOIN departamentos d ON f.departamento_id = d.id
@@ -111,6 +114,18 @@ $pageSubtitle = $func['cargo_nome'] ?? 'Colaborador';
                                 </p>
                             </div>
                             <div>
+                                <label style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">BI</label>
+                                <p style="margin: 0.25rem 0 0; font-size: 0.95rem;">
+                                    <?php echo htmlspecialchars($func['bi'] ?? '—'); ?>
+                                </p>
+                            </div>
+                            <div>
+                                <label style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Data de Nascimento</label>
+                                <p style="margin: 0.25rem 0 0; font-size: 0.95rem;">
+                                    <?php echo !empty($func['data_nascimento']) ? date('d/m/Y', strtotime($func['data_nascimento'])) : '—'; ?>
+                                </p>
+                            </div>
+                            <div>
                                 <label style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Departamento</label>
                                 <p style="margin: 0.25rem 0 0; font-size: 0.95rem;">
                                     <?php echo htmlspecialchars($func['departamento_nome'] ?? '—'); ?>
@@ -126,6 +141,18 @@ $pageSubtitle = $func['cargo_nome'] ?? 'Colaborador';
                                 <label style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Data de Admissão</label>
                                 <p style="margin: 0.25rem 0 0; font-size: 0.95rem;">
                                     <?php echo !empty($func['data_admissao']) ? date('d/m/Y', strtotime($func['data_admissao'])) : '—'; ?>
+                                </p>
+                            </div>
+                            <div>
+                                <label style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Tipo de Contrato</label>
+                                <p style="margin: 0.25rem 0 0; font-size: 0.95rem;">
+                                    <?php echo htmlspecialchars(str_replace('_', ' ', $func['tipo_contrato'] ?? '—')); ?>
+                                </p>
+                            </div>
+                            <div>
+                                <label style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">NIF</label>
+                                <p style="margin: 0.25rem 0 0; font-size: 0.95rem;">
+                                    <?php echo htmlspecialchars($func['nif_angolano'] ?? '—'); ?>
                                 </p>
                             </div>
                             <div>
@@ -147,6 +174,27 @@ $pageSubtitle = $func['cargo_nome'] ?? 'Colaborador';
                                 </p>
                             </div>
                         </div>
+
+                        <?php if (!empty($func['banco']) || !empty($func['iban'])): ?>
+                        <hr style="border-color: var(--glass-border); margin: 1.5rem 0;">
+                        <h6 style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;">
+                            <i class="bi bi-bank"></i> Dados Bancários
+                        </h6>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div>
+                                <label style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Banco</label>
+                                <p style="margin: 0.25rem 0 0; font-size: 0.95rem;">
+                                    <?php echo htmlspecialchars($func['banco'] ?? '—'); ?>
+                                </p>
+                            </div>
+                            <div>
+                                <label style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">IBAN</label>
+                                <p style="margin: 0.25rem 0 0; font-size: 0.95rem;">
+                                    <?php echo htmlspecialchars($func['iban'] ?? '—'); ?>
+                                </p>
+                            </div>
+                        </div>
+                        <?php endif; ?>
 
                     </div>
                 </div>

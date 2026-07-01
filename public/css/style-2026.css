@@ -1504,6 +1504,20 @@ a:hover { color: var(--primary); }
 .badge-primary { background: var(--primary-soft); color: var(--primary-light); }
 .badge-neutral { background: var(--bg-hover); color: var(--text-secondary); }
 
+/* Badge Custom (alias para compatibilidade) */
+.badge-custom {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: var(--radius-full);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    line-height: 1;
+    white-space: nowrap;
+}
+
 .badge-dot {
     width: 6px;
     height: 6px;
@@ -2568,4 +2582,84 @@ body.dashboard-bg .app-wrapper { position: relative; z-index: 1; }
 
 .link-muted:hover {
     color: var(--primary);
+}
+
+/* ============== BOOTSTRAP MODAL THEME SYNC ============== */
+.modal-content {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-xl);
+}
+
+.modal-content .modal-header {
+    background: transparent;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.modal-content .modal-footer {
+    background: transparent;
+    border-top: 1px solid var(--border-color);
+}
+
+.modal-content .btn-close {
+    filter: var(--btn-close-filter, none);
+}
+
+[data-theme="dark"] .modal-content .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+.modal-backdrop.show {
+    opacity: 0.6;
+}
+
+[data-theme="dark"] .modal-backdrop.show {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+/* ============== BOOTSTRAP TABLE THEME SYNC ============== */
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--text-primary);
+    --bs-table-border-color: var(--border-color);
+}
+
+.table-hover > tbody > tr:hover {
+    --bs-table-bg-state: var(--bg-hover);
+    background-color: var(--bg-hover);
+}
+
+.table thead {
+    background: var(--bg-body);
+}
+
+.table th {
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.7px;
+}
+
+/* ============== BOOTSTRAP SELECT THEME SYNC ============== */
+.form-select {
+    background-color: var(--bg-input);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+}
+
+.form-select:focus {
+    border-color: var(--primary-light);
+    box-shadow: var(--shadow-focus);
+    background-color: var(--bg-surface);
+}
+
+[data-theme="dark"] .form-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
 }

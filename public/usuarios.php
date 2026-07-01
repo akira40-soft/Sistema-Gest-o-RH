@@ -110,7 +110,7 @@ $funcionariosSemUser = $stmtFunc->fetchAll();
                     </div>
                 </div>
 
-                <div class="card bg-dark-glass">
+                <div class="card">
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
@@ -193,10 +193,10 @@ $roleClass = $roleColors[$u['tipo_acesso']] ?? 'badge-secondary';
     <!-- Modal Editar Usuário -->
     <div class="modal fade" id="modalEditarUsuario" tabindex="-1">
         <div class="modal-dialog">
-            <div class="modal-content text-white" style="background: var(--dark-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(10px);">
-                <div class="modal-header border-secondary">
+            <div class="modal-content">
+                <div class="modal-header">
                     <h5 class="modal-title">Editar Usuário</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="formEditarUsuario">
@@ -227,7 +227,7 @@ $roleClass = $roleColors[$u['tipo_acesso']] ?? 'badge-secondary';
                         <div id="msgErroEdit" class="alert alert-danger d-none py-2 small"></div>
                         <div id="msgSucessoEdit" class="alert alert-success d-none py-2 small"></div>
 
-                        <div class="modal-footer border-secondary px-0 pb-0">
+                        <div class="modal-footer px-0 pb-0">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                             <button type="submit" class="btn btn-primary" id="btnAtualizar">Salvar Alterações</button>
                         </div>
@@ -240,10 +240,10 @@ $roleClass = $roleColors[$u['tipo_acesso']] ?? 'badge-secondary';
     <!-- Modal Novo Usuário -->
     <div class="modal fade" id="modalNovoUsuario" tabindex="-1">
         <div class="modal-dialog">
-            <div class="modal-content text-white" style="background: var(--dark-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(10px);">
-                <div class="modal-header border-secondary">
+            <div class="modal-content">
+                <div class="modal-header">
                     <h5 class="modal-title">Novo Usuário do Sistema</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="formNovoUsuario">
@@ -422,5 +422,6 @@ $roleClass = $roleColors[$u['tipo_acesso']] ?? 'badge-secondary';
             });
         });
     </script>
+    <script src="js/app-2026.js"></script>
 </body>
 </html>
